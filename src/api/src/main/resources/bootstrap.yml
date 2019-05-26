@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: api
+  cloud:
+    config:
+      uri: http://localhost:9091
+      fail-fast: true
+#        retry:
+#          initial-interval: 20000
+#          multiplier: 2
+#          max-interval: 160000
