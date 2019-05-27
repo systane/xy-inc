@@ -2,7 +2,7 @@ package br.com.zup.api.service;
 
 import br.com.zup.api.dto.POIDTO;
 import br.com.zup.api.entity.POI;
-import br.com.zup.api.repository.POIRepository;
+import br.com.zup.api.repository.IPoiRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,65 +14,34 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class POIService implements IPOIService{
 
-    private final POIRepository poiRepository;
+    private final IPoiRepository repository;
 
     @Override
     public List<POI> listAll() {
-        return listAllPOIs();
+        return repository.findAll();
     }
 
     @Override
     public POI create(POI entity) {
-        return entity;
+        return repository.save(entity);
     }
 
     @Override
-    public List<POI> listAllByReferencePoint(int x, int y, double d) {
-        return listAllByReferencePoint(x, y, d, listAllPOIs());
+    public List<POI> listAllByReferencePoint(POIDTO referencePoint, double maxDistance) {
+        List<POI> pois = listAll();
+
+        return pois.stream()
+                .filter(poi -> isNearFromReference(poi, referencePoint, maxDistance))
+                .collect(Collectors.toList());
     }
 
-    private List<POI> listAllPOIs(){
-        List<POI> pois = new ArrayList<>();
-        int[] coordinatesX = coordinatesX();
-        int[] coordinatesY = coordinatesY();
-        String[] names = names();
-
-        for(int x: coordinatesX){
-            pois.add(new POI(names[x], x, coordinatesY[x]));
-        }
-
-        return pois;
-    }
-
-    private List<POI> listAllByReferencePoint(int x, int y, double d, List<POI> pois){
-        POIDTO referencePoint = new POIDTO();
-        referencePoint.setX(20);
-        referencePoint.setY(10);
-
-        return pois.stream().filter(poi -> filterPOISByDistance(poi, referencePoint, d)).collect(Collectors.toList());
-    }
-
-    private boolean filterPOISByDistance(POI poi, POIDTO referencePoint, double d) {
+    private boolean isNearFromReference(POI poi, POIDTO referencePoint, double maxDistance) {
         int xDifference = referencePoint.getX() - poi.getX();
         int yDifference = referencePoint.getY() - poi.getY();
 
-        double distanceBetween = Math.sqrt(xDifference) + Math.sqrt(yDifference);
+        double distanceBetween = Math.sqrt(Math.pow(xDifference, 2) + Math.pow(yDifference, 2));
 
-        return distanceBetween < d;
+        return distanceBetween < maxDistance;
     }
 
-    private int[] coordinatesX(){
-        int[] coordinatesX = {27, 31, 15, 19, 12, 23, 28};
-        return coordinatesX;
-    }
-
-    private int[] coordinatesY(){
-        int[] coordinatesY = {12, 18, 12, 21, 8, 6, 2};
-        return coordinatesY;
-    }
-
-    private String[] names(){
-        String[] names = {"Lanchonete", "Posto", "Joalheria", "Floricultura", "Pub", "Supermercado", "Churrascaria"};
-        return names;
-    }
 }

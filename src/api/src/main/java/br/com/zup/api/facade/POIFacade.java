@@ -6,6 +6,7 @@ import br.com.zup.api.service.IPOIService;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,8 +30,14 @@ public class POIFacade implements IPOIFacade {
     }
 
     @Override
-    public List<POIDTO> listAllByReferencePoint(int x, int y, double d) {
-        return service.listAllByReferencePoint(x, y, d).stream().map(poi -> convertToDTO(poi)).collect(Collectors.toList());
+    public List<POIDTO> listAllByReferencePoint(int x, int y, double maxDistance) {
+        if(maxDistance < 0){
+            throw new IllegalArgumentException("the maxDistance must be a non negative number");
+        }
+
+        return service.listAllByReferencePoint(new POIDTO(x, y), maxDistance).stream()
+                .map(poi -> convertToDTO(poi))
+                .collect(Collectors.toList());
     }
 
 
