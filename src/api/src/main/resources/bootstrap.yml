@@ -3,7 +3,8 @@ spring:
     name: api
   cloud:
     config:
-      uri: http://localhost:8888
+#      uri: http://localhost:8888
+      uri: configServerContainer
       fail-fast: true
 #        retry:
 #          initial-interval: 20000
