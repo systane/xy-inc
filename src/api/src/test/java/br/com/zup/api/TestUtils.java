@@ -5,12 +5,10 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-public class ApiApplicationTests {
+public class TestUtils {
 
-	@Test
-	public void contextLoads() {
-	}
+	public static final String POI_NAME = "Lanchonete";
+	public static final int COORDINATE_X = 27;
+	public static final int COORDINATE_Y = 12;
 
 }
