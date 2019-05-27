@@ -3,7 +3,7 @@ spring:
     name: discoveryServer
   cloud:
     config:
-      uri: http://localhost:9090
+      uri: http://localhost:8888
       fail-fast: true
       retry:
         initial-interval: 20000
