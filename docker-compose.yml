@@ -18,13 +18,24 @@ services:
     depends_on:
       - "config_server"
 
+
+  gateway:
+    build:
+      dockerfile: ./src/gateway/Dockerfile
+      context: .
+    container_name: gatewayContainer
+    ports:
+      - "8765:8765"
+    depends_on:
+      - "config_server"
+      - "discovery_server"
+
   api:
     build:
       dockerfile: ./src/api/Dockerfile
       context: .
     container_name: apiContainer
-    ports:
-      - "9091:9091"
     depends_on:
       - "config_server"
       - "discovery_server"
+      - "gateway"
