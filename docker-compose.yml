@@ -15,3 +15,16 @@ services:
     container_name: discoveryServerContainer
     ports:
       - "9090:9090"
+    depends_on:
+      - "config_server"
+
+  api:
+    build:
+      dockerfile: ./src/api/Dockerfile
+      context: .
+    container_name: apiContainer
+    ports:
+      - "9091:9091"
+    depends_on:
+      - "config_server"
+      - "discovery_server"
