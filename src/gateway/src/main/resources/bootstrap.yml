@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    config:
+      uri: http://configServerContainer:8888
+      fail-fast: true
+      retry:
+        initial-interval: 20000
+        multiplier: 2
+        max-interval: 160000
