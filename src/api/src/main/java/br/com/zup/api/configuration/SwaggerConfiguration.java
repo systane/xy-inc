@@ -27,13 +27,15 @@ public class SwaggerConfiguration extends WebMvcConfigurationSupport {
                 .title("Sprint Boot REST API")
                 .description("Sprint Boot REST API for POIs")
                 .version("1.0.0")
+                .license("Apache License Version 2.0")
+                .licenseUrl("https://www.apache.org/licenses/LICENSE-2.0\"")
                 .build();
     }
 
     @Override
-    protected void addResourceHandlers (ResourceHandlerRegistry registry) {
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources");
+                .addResourceLocations("classpath:/META-INF/resources/");
 
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
