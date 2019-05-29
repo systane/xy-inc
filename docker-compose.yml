@@ -5,8 +5,6 @@ services:
       dockerfile: ./src/configServer/Dockerfile
       context: .
     container_name: configServerContainer
-    ports:
-      - "8888:8888"
   
   discovery_server:
     build:

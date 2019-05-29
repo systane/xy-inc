@@ -24,21 +24,19 @@ public class POIDTO {
     }
 
     public void setX(int x){
-        if(x > 0){
-            this.x = x;
-        }
-        else{
+        if(x < 0){
             throw new IllegalArgumentException("the coordinate x must be a non negative number");
         }
+
+       this.x = x;
     }
 
     public void setY(int y){
-        if(y > 0){
-            this.y = y;
-        }
-        else{
+        if(y < 0){
             throw new IllegalArgumentException("the coordinate y must be a non negative number");
         }
+
+        this.y = y;
     }
 
     public void setName(String name){
