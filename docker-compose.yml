@@ -18,7 +18,6 @@ services:
     depends_on:
       - "config_server"
 
-
   gateway:
     build:
       dockerfile: ./src/gateway/Dockerfile

@@ -1,5 +1,12 @@
-FROM openjdk:8u121-alpine
+FROM maven:3.5-jdk-8
 
-COPY src/configServer/target/configServer-0.0.1-SNAPSHOT.jar /app/
+COPY src/configServer/src /app/configServer/src
 
-CMD ["java", "-jar", "/app/configServer-0.0.1-SNAPSHOT.jar"]
+COPY src/configServer/pom.xml /app/configServer/
+
+RUN mkdir /app/jar && \
+mvn -f /app/configServer/pom.xml package -DskipTests && \
+mv /app/configServer/target/configServer-0.0.1-SNAPSHOT.jar /app/jar/configServer.jar && \
+rm -rf /app/configServer/
+
+CMD ["java", "-jar", "/app/jar/configServer.jar"]

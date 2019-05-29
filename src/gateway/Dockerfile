@@ -1,5 +1,12 @@
-FROM openjdk:8u121-alpine
+FROM maven:3.5-jdk-8
 
-COPY src/gateway/target/gateway-0.0.1-SNAPSHOT.jar /app/
+COPY src/gateway/src /app/gateway/src
 
-CMD ["java", "-jar", "/app/gateway-0.0.1-SNAPSHOT.jar"]
+COPY src/gateway/pom.xml /app/gateway/
+
+RUN mkdir /app/jar && \
+mvn -f /app/gateway/pom.xml package -DskipTests && \
+mv /app/gateway/target/gateway-0.0.1-SNAPSHOT.jar /app/jar/gateway.jar && \
+rm -rf /app/gateway/
+
+CMD ["java", "-jar", "/app/jar/gateway.jar"]
