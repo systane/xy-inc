@@ -10,42 +10,52 @@ import br.com.zup.api.facade.POIFacade;
 import br.com.zup.api.service.POIService;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class POIFacadeUnitTest {
 
     @InjectMocks
     private POIFacade facade;
 
-    @InjectMocks
+    @Mock
     private ModelMapper modelMapper;
 
-    @MockBean
+    @Mock
     private POIService service;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     private static POI poi;
     private static POIDTO poiDto;
 
+    private static final String NEGATIVE_DISTANCE_ERROR_MESSAGE = "the maxDistance must be a non negative number";
+
     @Before
     public void setUp(){
-        modelMapper = new ModelMapper();
+        poiDto = new POIDTO(POI_NAME, COORDINATE_X, COORDINATE_Y);
+        poi = new POI(POI_NAME, COORDINATE_X, COORDINATE_Y);
+
+        when(modelMapper.map(Mockito.any(POI.class), Mockito.any())).thenReturn(poiDto);
+        when(modelMapper.map(Mockito.any(POIDTO.class), Mockito.any())).thenReturn(poi);
     }
 
     @Test
     public void listAll() throws Exception {
-        poi = new POI(POI_NAME, COORDINATE_X, COORDINATE_Y);
         when(service.listAll()).thenReturn(Arrays.asList(poi));
 
         List<POIDTO> dtoList = facade.listAll();
@@ -58,7 +68,6 @@ public class POIFacadeUnitTest {
 
     @Test
     public void create() throws Exception {
-        poiDto = new POIDTO(POI_NAME, COORDINATE_X, COORDINATE_Y);
         when(service.create(Mockito.any(POI.class))).thenReturn(poi);
 
         POIDTO savedPoi = facade.create(poiDto);
@@ -70,7 +79,6 @@ public class POIFacadeUnitTest {
 
     @Test
     public void listAllByReferencePoint() throws Exception {
-        poi = new POI(POI_NAME, COORDINATE_X, COORDINATE_Y);
         double maxDistance = 10;
 
         when(service.listAllByReferencePoint(Mockito.any(POIDTO.class), Mockito.anyDouble()))
@@ -82,5 +90,18 @@ public class POIFacadeUnitTest {
         Assert.assertEquals(poi.getName(), dtoList.get(0).getName());
         Assert.assertEquals(poi.getX(), dtoList.get(0).getX());
         Assert.assertEquals(poi.getY(), dtoList.get(0).getY());
+    }
+
+    @Test
+    public void listAllByReferencePointWithNegativeDistance() throws Exception {
+        expectedException.expect(IllegalArgumentException.class);
+        expectedException.expectMessage(NEGATIVE_DISTANCE_ERROR_MESSAGE);
+
+        double maxDistance = -10;
+
+        when(service.listAllByReferencePoint(Mockito.any(POIDTO.class), Mockito.anyDouble()))
+                .thenReturn(Arrays.asList(poi));
+
+        facade.listAllByReferencePoint(COORDINATE_X, COORDINATE_Y, maxDistance);
     }
 }
